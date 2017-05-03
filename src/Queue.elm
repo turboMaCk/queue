@@ -60,3 +60,26 @@ fromList list =
 toList : Queue a -> List a
 toList (Queue fl rl) =
     fl ++ List.reverse rl
+
+
+size : Queue a -> Int
+size (Queue fl rl) =
+    List.length fl + List.length rl
+
+
+map : (a -> b) -> Queue a -> Queue b
+map fc (Queue fl rl) =
+    let
+        map_ =
+            List.map fc
+    in
+        Queue (map_ fl) (map_ rl)
+
+
+filter : (a -> Bool) -> Queue a -> Queue a
+filter fc (Queue fl rl) =
+    let
+        f =
+            List.filter fc
+    in
+        Queue (f fl) (f rl)
