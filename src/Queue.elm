@@ -13,8 +13,20 @@ type Queue a
     = Queue (Front a) (Rear a)
 
 
-initialize : Queue a
-initialize =
+{-| private pseudo-constructor
+-}
+queue : Front a -> Rear a -> Queue a
+queue fl rl =
+    case fl of
+        [] ->
+            Queue (List.reverse rl) []
+
+        _ ->
+            Queue fl rl
+
+
+empty : Queue a
+empty =
     Queue [] []
 
 
@@ -23,33 +35,24 @@ isEmpty (Queue fl rl) =
     List.isEmpty fl && List.isEmpty rl
 
 
+size : Queue a -> Int
+size (Queue fl rl) =
+    List.length fl + List.length rl
+
+
 enqueue : a -> Queue a -> ( Maybe a, Queue a )
 enqueue a (Queue fl rl) =
-    ( Nothing, Queue fl <| a :: rl )
+    ( Nothing, queue fl <| a :: rl )
 
 
 dequeue : Queue a -> ( Maybe a, Queue a )
-dequeue queue =
-    let
-        (Queue fl rl) =
-            balance queue
-    in
-        case fl of
-            [] ->
-                ( Nothing, queue )
-
-            head :: tail ->
-                ( Just head, Queue tail rl )
-
-
-balance : Queue a -> Queue a
-balance ((Queue fl rl) as queue) =
+dequeue (Queue fl rl) =
     case fl of
         [] ->
-            Queue (List.reverse rl) []
+            ( Nothing, Queue [] [] )
 
-        _ ->
-            queue
+        head :: tail ->
+            ( Just head, queue tail rl )
 
 
 fromList : List a -> Queue a
@@ -62,18 +65,13 @@ toList (Queue fl rl) =
     fl ++ List.reverse rl
 
 
-size : Queue a -> Int
-size (Queue fl rl) =
-    List.length fl + List.length rl
-
-
 map : (a -> b) -> Queue a -> Queue b
 map fc (Queue fl rl) =
     let
         map_ =
             List.map fc
     in
-        Queue (map_ fl) (map_ rl)
+        queue (map_ fl) (map_ rl)
 
 
 filter : (a -> Bool) -> Queue a -> Queue a
@@ -82,4 +80,4 @@ filter fc (Queue fl rl) =
         f =
             List.filter fc
     in
-        Queue (f fl) (f rl)
+        queue (f fl) (f rl)
