@@ -55,6 +55,11 @@ dequeue (Queue fl rl) =
             ( Just head, queue tail rl )
 
 
+next : Queue a -> ( Maybe a, Queue a )
+next ((Queue fl _) as q) =
+    ( List.head fl, q )
+
+
 fromList : List a -> Queue a
 fromList list =
     Queue list []
