@@ -6,32 +6,57 @@ import Fuzz exposing (list, int, tuple, string)
 import String
 
 
+-- libraris
+
+import Queue exposing (..)
+import State
+
+
 all : Test
 all =
-    describe "Sample Test Suite"
-        [ describe "Unit test examples"
-            [ test "Addition" <|
-                \() ->
-                    Expect.equal (3 + 7) 10
-            , test "String.left" <|
-                \() ->
-                    Expect.equal "a" (String.left 1 "abcdefg")
-            , test "This test should fail - you should remove it" <|
-                \() ->
-                    Expect.fail "Failed as expected!"
-            ]
-        , describe "Fuzz test examples, using randomly generated input"
-            [ fuzz (list int) "Lists always have positive length" <|
-                \aList ->
-                    List.length aList |> Expect.atLeast 0
-            , fuzz (list int) "Sorting a list does not change its length" <|
-                \aList ->
-                    List.sort aList |> List.length |> Expect.equal (List.length aList)
-            , fuzzWith { runs = 1000 } int "List.member will find an integer in a list containing it" <|
-                \i ->
-                    List.member i [ i ] |> Expect.true "If you see this, List.member returned False!"
-            , fuzz2 string string "The length of a string equals the sum of its substrings' lengths" <|
-                \s1 s2 ->
-                    s1 ++ s2 |> String.length |> Expect.equal (String.length s1 + String.length s2)
+    describe "Queue"
+        [ describe "constructors"
+            [ describe "empty"
+                [ test "empty" <|
+                    \() ->
+                        Expect.equal (toList empty) []
+                ]
+            , describe "tolist & fromList"
+                [ test "some" <|
+                    \() ->
+                        Expect.equal (toList <| fromList [ 1, 2, 3 ]) [ 1, 2, 3 ]
+                , fuzz (list string) "fuzzy" <|
+                    \list ->
+                        Expect.equal (toList <| fromList list) list
+                ]
+            , describe "isEmpty"
+                [ test "empty" <|
+                    \() ->
+                        Expect.true "empty" <| isEmpty empty
+                , test "not empty" <|
+                    \() ->
+                        Expect.false "not empty" <| isEmpty <| fromList [ 1 ]
+                ]
+            , describe "size"
+                [ fuzz (list string) "fuzzy" <|
+                    \list ->
+                        Expect.equal (size <| fromList list) <| List.length list
+                ]
+            , describe "enqueue"
+                [ test "enqueue to empty" <|
+                    \() ->
+                        Expect.equal (empty |> enqueue 1) ( Nothing, fromList [ 1 ] )
+                , test "equeue not empty" <|
+                    \() ->
+                        Expect.equal (fromList [ "foo" ] |> enqueue "bar" |> Tuple.second |> toList) [ "foo", "bar" ]
+                ]
+            , describe "dequeue"
+                [ test "empty" <|
+                    \() ->
+                        Expect.equal (dequeue empty) ( Nothing, empty )
+                , test "not empty" <|
+                    \() ->
+                        Expect.equal (fromList [ 1 ] |> dequeue) ( Just 1, empty )
+                ]
             ]
         ]
