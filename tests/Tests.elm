@@ -19,20 +19,20 @@ computation initial =
         square maybeInt =
             case maybeInt of
                 Just int ->
-                    State.advance (enqueue <| int ^ 2)
+                    State.advance <| (,) Nothing << (enqueue <| int ^ 2)
 
                 Nothing ->
                     State.advance <| (,) Nothing
 
         add : Int -> Maybe Int -> State (Queue Int) (Maybe Int)
         add num _ =
-            State.advance (enqueue num)
+            State.advance <| (,) Nothing << (enqueue num)
 
         getState : Maybe Int -> State (Queue Int) (Maybe Int)
         getState _ =
             State.advance dequeue
     in
-        State.advance next
+        State.embed next
             |> State.andThen (add 10)
             -- add 10 to queue
             |>
@@ -93,7 +93,7 @@ enqueueList list queue =
                 add maybeThing =
                     case maybeThing of
                         Just thing ->
-                            State.advance (enqueue thing)
+                            State.advance <| (,) Nothing << (enqueue thing)
 
                         Nothing ->
                             State.advance <| (,) Nothing
@@ -105,7 +105,6 @@ enqueueList list queue =
                     |> enqueueList tail
 
 
-
 usefulMonadic : Test
 usefulMonadic =
     describe "Useful monadic"
@@ -115,7 +114,7 @@ usefulMonadic =
                     Expect.equal (toList <| enqueueList list empty) list
             , fuzz (list string) "nonempty queue" <|
                 \list ->
-                    Expect.equal (toList <| enqueueList list <| fromList ["foo", "bar"]) <| ["foo", "bar"] ++ list
+                    Expect.equal (toList <| enqueueList list <| fromList [ "foo", "bar" ]) <| [ "foo", "bar" ] ++ list
             ]
         ]
 
@@ -147,15 +146,15 @@ all =
         , describe "size"
             [ fuzz (list string) "fuzzy" <|
                 \list ->
-                    Expect.equal (size <| Tuple.second <| enqueue "bar" <| fromList list) ((+) 1 <| List.length list)
+                    Expect.equal (size <| enqueue "bar" <| fromList list) ((+) 1 <| List.length list)
             ]
         , describe "enqueue"
             [ test "enqueue to empty" <|
                 \() ->
-                    Expect.equal (empty |> enqueue 1) ( Nothing, fromList [ 1 ] )
+                    Expect.equal (empty |> enqueue 1) <| fromList [ 1 ]
             , test "equeue not empty" <|
                 \() ->
-                    Expect.equal (fromList [ "foo" ] |> enqueue "bar" |> Tuple.second |> toList) [ "foo", "bar" ]
+                    Expect.equal (fromList [ "foo" ] |> enqueue "bar" |> toList) [ "foo", "bar" ]
             ]
         , describe "dequeue"
             [ test "empty" <|
@@ -168,10 +167,10 @@ all =
         , describe "next"
             [ test "empty" <|
                 \() ->
-                    Expect.equal (next empty) ( Nothing, empty )
+                    Expect.equal (next empty) Nothing
             , test "not empty" <|
                 \() ->
-                    Expect.equal (next <| fromList [ 1 ]) ( Just 1, fromList [ 1 ] )
+                    Expect.equal (next <| fromList [ 1 ]) <| Just 1
             ]
         , describe "map"
             [ fuzz (list string) "identity" <|

@@ -40,9 +40,9 @@ size (Queue fl rl) =
     List.length fl + List.length rl
 
 
-enqueue : a -> Queue a -> ( Maybe a, Queue a )
+enqueue : a -> Queue a -> Queue a
 enqueue a (Queue fl rl) =
-    ( Nothing, queue fl <| a :: rl )
+    queue fl <| a :: rl
 
 
 dequeue : Queue a -> ( Maybe a, Queue a )
@@ -55,9 +55,9 @@ dequeue (Queue fl rl) =
             ( Just head, queue tail rl )
 
 
-next : Queue a -> ( Maybe a, Queue a )
-next ((Queue fl _) as q) =
-    ( List.head fl, q )
+next : Queue a -> Maybe a
+next (Queue fl _) =
+    List.head fl
 
 
 fromList : List a -> Queue a
