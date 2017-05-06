@@ -81,6 +81,45 @@ monadic =
             ]
 
 
+enqueueList : List a -> Queue a -> Queue a
+enqueueList list queue =
+    case list of
+        [] ->
+            queue
+
+        head :: tail ->
+            let
+                add : Maybe a -> State (Queue a) (Maybe a)
+                add maybeThing =
+                    case maybeThing of
+                        Just thing ->
+                            State.advance (enqueue thing)
+
+                        Nothing ->
+                            State.advance <| (,) Nothing
+            in
+                State.state (Just head)
+                    |> State.andThen add
+                    |> State.run queue
+                    |> Tuple.second
+                    |> enqueueList tail
+
+
+
+usefulMonadic : Test
+usefulMonadic =
+    describe "Useful monadic"
+        [ describe "equeeu list as separate items"
+            [ fuzz (list string) "empty queue" <|
+                \list ->
+                    Expect.equal (toList <| enqueueList list empty) list
+            , fuzz (list string) "nonempty queue" <|
+                \list ->
+                    Expect.equal (toList <| enqueueList list <| fromList ["foo", "bar"]) <| ["foo", "bar"] ++ list
+            ]
+        ]
+
+
 all : Test
 all =
     describe "Queue"
@@ -148,4 +187,5 @@ all =
                     Expect.equal (toList <| Queue.filter ((<) 2) <| fromList [ 1, 2, 3 ]) [ 3 ]
             ]
         , monadic
+        , usefulMonadic
         ]
