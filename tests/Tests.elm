@@ -32,7 +32,7 @@ computation initial =
         getState _ =
             State.advance dequeue
     in
-        State.embed next
+        State.embed front
             |> State.andThen (add 10)
             -- add 10 to queue
             |>
@@ -144,9 +144,12 @@ all =
                     Expect.false "not empty" <| isEmpty <| fromList [ 1 ]
             ]
         , describe "size"
-            [ fuzz (list string) "fuzzy" <|
+            [ fuzz (list string) "after enqueue" <|
                 \list ->
-                    Expect.equal (size <| enqueue "bar" <| fromList list) ((+) 1 <| List.length list)
+                    Expect.equal (size <| enqueue "bar" <| fromList list) <| (List.length list) + 1
+            , test "after dequeue" <|
+                \list ->
+                    Expect.equal (size <| Tuple.second <| dequeue <| fromList [1,2,3]) <| 2
             ]
         , describe "enqueue"
             [ test "enqueue to empty" <|
@@ -164,13 +167,13 @@ all =
                 \() ->
                     Expect.equal (dequeue <| fromList [ 1 ]) ( Just 1, empty )
             ]
-        , describe "next"
+        , describe "front"
             [ test "empty" <|
                 \() ->
-                    Expect.equal (next empty) Nothing
+                    Expect.equal (front empty) Nothing
             , test "not empty" <|
                 \() ->
-                    Expect.equal (next <| fromList [ 1 ]) <| Just 1
+                    Expect.equal (front <| fromList [ 1 ]) <| Just 1
             ]
         , describe "map"
             [ fuzz (list string) "identity" <|
