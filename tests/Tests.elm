@@ -111,10 +111,12 @@ usefulMonadic =
         [ describe "equeeu list as separate items"
             [ fuzz (list string) "empty queue" <|
                 \list ->
-                    Expect.equal (toList <| enqueueList list empty) list
+                    (toList <| enqueueList list empty)
+                        |> Expect.equal list
             , fuzz (list string) "nonempty queue" <|
                 \list ->
-                    Expect.equal (toList <| enqueueList list <| fromList [ "foo", "bar" ]) <| [ "foo", "bar" ] ++ list
+                    (toList <| enqueueList list <| fromList [ "foo", "bar" ])
+                        |> Expect.equal ([ "foo", "bar" ] ++ list)
             ]
         ]
 
@@ -146,10 +148,12 @@ all =
         , describe "size"
             [ fuzz (list string) "after enqueue" <|
                 \list ->
-                    Expect.equal (size <| enqueue "bar" <| fromList list) <| (List.length list) + 1
+                    (size <| enqueue "bar" <| fromList list)
+                        |> Expect.equal ((List.length list) + 1)
             , test "after dequeue" <|
                 \list ->
-                    Expect.equal (size <| Tuple.second <| dequeue <| fromList [1,2,3]) <| 2
+                    (size <| Tuple.second <| dequeue <| fromList [ 1, 2, 3 ])
+                        |> Expect.equal 2
             ]
         , describe "enqueue"
             [ test "enqueue to empty" <|
@@ -157,7 +161,8 @@ all =
                     Expect.equal (empty |> enqueue 1) <| fromList [ 1 ]
             , test "equeue not empty" <|
                 \() ->
-                    Expect.equal (fromList [ "foo" ] |> enqueue "bar" |> toList) [ "foo", "bar" ]
+                    (fromList [ "foo" ] |> enqueue "bar" |> toList)
+                        |> Expect.equal [ "foo", "bar" ]
             ]
         , describe "dequeue"
             [ test "empty" <|

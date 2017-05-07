@@ -13,7 +13,7 @@ module Queue
         , filter
         )
 
-{-| Simple FIFO (first in, first out) queue implementation with focus on simplicity.
+{-| Queue is simple FIFO (first in, first out) datastructure.
 
 # Type
 
@@ -43,7 +43,14 @@ type alias Front a =
     List a
 
 
-{-| -}
+{-| Equality checks (`==`) on `Queue` are unreliable due to dynamic distribution of elements.
+
+If you need need qeuality checks use [`toList`](#toList).
+
+```
+Queue.toList firstQueue == Queue.toList secondQueue
+```
+ -}
 type Queue a
     = Queue (Front a) (Rear a)
 
@@ -71,7 +78,7 @@ empty =
 -- Query
 
 
-{-| Determine if queue is empty
+{-| Determine if `Queue` is empty
 
 ```
 Queue.isEmpty Queue.empty == True
@@ -129,6 +136,7 @@ dequeue (Queue fl rl) =
 ```
 Queue.front Queue.empty == Nothing
 Queue.front (Queue.fromList [ 1, 2 ]) == Just 1
+```
 -}
 front : Queue a -> Maybe a
 front (Queue fl _) =
@@ -155,7 +163,7 @@ fromList list =
 
 ```
 Queue.toList (Queue.fromList []) == []
-Queue.toList (Queue.fromList [ 1, 2, 3]) == [ 1, 2, 3 ]
+Queue.toList (Queue.fromList [ 1, 2, 3 ]) == [ 1, 2, 3 ]
 ```
 -}
 toList : Queue a -> List a
@@ -167,11 +175,12 @@ toList (Queue fl rl) =
 -- Transform
 
 
-{-| Map function ofer `Queue`
+{-| Map function over `Queue`
 
 ```
 Queue.toList (Queue.map identity (Queue.fromList [ 1, 2 ])) == [ 1, 2 ]
 Queue.toList (Queue.map ((+) 1) (Queue.fromList [ 1, 2 ])) == [ 2, 3 ]
+```
 -}
 map : (a -> b) -> Queue a -> Queue b
 map fc (Queue fl rl) =
@@ -187,6 +196,7 @@ map fc (Queue fl rl) =
 ```
 Queue.toList (Queue.filter identity (Queue.fromList [ True, False ])) == [ True ]
 Queue.toList (Queue.filter ((<) 1) (Queue.fromList [ 1, 2 ])) == [ 2 ]
+```
 -}
 filter : (a -> Bool) -> Queue a -> Queue a
 filter fc (Queue fl rl) =
