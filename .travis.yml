@@ -37,10 +37,10 @@ install:
   - npm --version
   - npm install -g elm@$ELM_VERSION
   - npm install -g elm-test@$ELM_TEST_VERSION
-  - mv $(npm config get prefix)/bin/elm-make $(npm config get prefix)/bin/elm-make-old
-  - printf '%s\n\n' '#!/bin/bash' 'echo "Running elm-make with sysconfcpus -n 1"' '$TRAVIS_BUILD_DIR/sysconfcpus/bin/sysconfcpus -n 2 elm-make-old "$@"' > $(npm config get prefix)/bin/elm-make
-  - chmod +x $(npm config get prefix)/bin/elm-make
-  - elm-package install --yes
+  - mv $(npm config get prefix)/bin/elm $(npm config get prefix)/bin/elm-old
+  - printf '%s\n\n' '#!/bin/bash' 'echo "Running elm with sysconfcpus -n 1"' '$TRAVIS_BUILD_DIR/sysconfcpus/bin/sysconfcpus -n 2 elm-old "$@"' > $(npm config get prefix)/bin/elm
+  - chmod +x $(npm config get prefix)/bin/elm
+  - elm install
 
 script:
-  - elm-test --yes
+  - elm-test
