@@ -1,35 +1,32 @@
-module Queue
-    exposing
-        ( Queue
-        , empty
-        , isEmpty
-        , size
-        , enqueue
-        , dequeue
-        , front
-        , fromList
-        , toList
-        , map
-        , filter
-        )
+module Queue exposing
+    ( Queue, empty
+    , isEmpty, size, enqueue, dequeue, front
+    , fromList, toList
+    , map, filter
+    )
 
 {-| Queue is simple FIFO (first in, first out) datastructure.
+
 
 # Type
 
 @docs Queue, empty
 
+
 # Query
 
 @docs isEmpty, size, enqueue, dequeue, front
+
 
 # Lists
 
 @docs fromList, toList
 
+
 # Transformations
 
 @docs map, filter
+
 -}
 
 -- Types
@@ -47,10 +44,9 @@ type alias Front a =
 
 If you need need qeuality checks use [`toList`](#toList).
 
-```
-Queue.toList firstQueue == Queue.toList secondQueue
-```
- -}
+    Queue.toList firstQueue == Queue.toList secondQueue
+
+-}
 type Queue a
     = Queue (Front a) (Rear a)
 
@@ -80,10 +76,10 @@ empty =
 
 {-| Determine if `Queue` is empty
 
-```
-Queue.isEmpty Queue.empty == True
-Queue.isEmpty (Queue.fromList [ 1, 2 ]) == False
-```
+    Queue.isEmpty Queue.empty == True
+
+    Queue.isEmpty (Queue.fromList [ 1, 2 ]) == False
+
 -}
 isEmpty : Queue a -> Bool
 isEmpty (Queue fl rl) =
@@ -92,10 +88,9 @@ isEmpty (Queue fl rl) =
 
 {-| Get size of `Queue`
 
-```
-Queue.size empty == 0
-Queue.size (Queue.fromList [ 1, 2 ]) = 2
-```
+    Queue.size empty == 0
+    Queue.size (Queue.fromList [ 1, 2 ]) = 2
+
 -}
 size : Queue a -> Int
 size (Queue fl rl) =
@@ -104,10 +99,10 @@ size (Queue fl rl) =
 
 {-| Add item to `Queue`
 
-```
-Queue.length (Queue.enqueue 1 Queue.empty) == 1
-Queue.length (Queue.enqueue 1 (Queue.fromList [ 1, 2 ])) == 3
-```
+    Queue.length (Queue.enqueue 1 Queue.empty) == 1
+
+    Queue.length (Queue.enqueue 1 (Queue.fromList [ 1, 2 ])) == 3
+
 -}
 enqueue : a -> Queue a -> Queue a
 enqueue a (Queue fl rl) =
@@ -116,10 +111,10 @@ enqueue a (Queue fl rl) =
 
 {-| Take item from `Queue`
 
-```
-Queue.dequeue Queue.empty == ( Nothing, Queue.empty )
-Queue.dequeue (Queue.fromList [ 1 ]) == ( Just 1, Queue.empty )
-```
+    Queue.dequeue Queue.empty == ( Nothing, Queue.empty )
+
+    Queue.dequeue (Queue.fromList [ 1 ]) == ( Just 1, Queue.empty )
+
 -}
 dequeue : Queue a -> ( Maybe a, Queue a )
 dequeue (Queue fl rl) =
@@ -133,10 +128,10 @@ dequeue (Queue fl rl) =
 
 {-| Ask for front item without removing it from `Queue`
 
-```
-Queue.front Queue.empty == Nothing
-Queue.front (Queue.fromList [ 1, 2 ]) == Just 1
-```
+    Queue.front Queue.empty == Nothing
+
+    Queue.front (Queue.fromList [ 1, 2 ]) == Just 1
+
 -}
 front : Queue a -> Maybe a
 front (Queue fl _) =
@@ -149,10 +144,9 @@ front (Queue fl _) =
 
 {-| Build `Queue` from `List`
 
-```
-Queue.fromList [] == Queue.empty
-Queue.length (Queue.fromList [ 1, 2, 3 ])) == 3
-```
+    Queue.fromList [] == Queue.empty
+    Queue.length (Queue.fromList [ 1, 2, 3 ])) == 3
+
 -}
 fromList : List a -> Queue a
 fromList list =
@@ -161,10 +155,10 @@ fromList list =
 
 {-| Convert `Queue` to `List`
 
-```
-Queue.toList (Queue.fromList []) == []
-Queue.toList (Queue.fromList [ 1, 2, 3 ]) == [ 1, 2, 3 ]
-```
+    Queue.toList (Queue.fromList []) == []
+
+    Queue.toList (Queue.fromList [ 1, 2, 3 ]) == [ 1, 2, 3 ]
+
 -}
 toList : Queue a -> List a
 toList (Queue fl rl) =
@@ -177,10 +171,10 @@ toList (Queue fl rl) =
 
 {-| Map function over `Queue`
 
-```
-Queue.toList (Queue.map identity (Queue.fromList [ 1, 2 ])) == [ 1, 2 ]
-Queue.toList (Queue.map ((+) 1) (Queue.fromList [ 1, 2 ])) == [ 2, 3 ]
-```
+    Queue.toList (Queue.map identity (Queue.fromList [ 1, 2 ])) == [ 1, 2 ]
+
+    Queue.toList (Queue.map ((+) 1) (Queue.fromList [ 1, 2 ])) == [ 2, 3 ]
+
 -}
 map : (a -> b) -> Queue a -> Queue b
 map fc (Queue fl rl) =
@@ -188,15 +182,15 @@ map fc (Queue fl rl) =
         map_ =
             List.map fc
     in
-        queue (map_ fl) (map_ rl)
+    queue (map_ fl) (map_ rl)
 
 
 {-| Filter items items in `Queue`
 
-```
-Queue.toList (Queue.filter identity (Queue.fromList [ True, False ])) == [ True ]
-Queue.toList (Queue.filter ((<) 1) (Queue.fromList [ 1, 2 ])) == [ 2 ]
-```
+    Queue.toList (Queue.filter identity (Queue.fromList [ True, False ])) == [ True ]
+
+    Queue.toList (Queue.filter ((<) 1) (Queue.fromList [ 1, 2 ])) == [ 2 ]
+
 -}
 filter : (a -> Bool) -> Queue a -> Queue a
 filter fc (Queue fl rl) =
@@ -204,4 +198,4 @@ filter fc (Queue fl rl) =
         f =
             List.filter fc
     in
-        queue (f fl) (f rl)
+    queue (f fl) (f rl)
