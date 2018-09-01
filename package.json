@@ -1,7 +1,0 @@
-{
-  "name": "queue",
-  "version": "1.0.0",
-  "main": "index.js",
-  "author": "Marek Fajkus <marek.faj@gmail.com>",
-  "license": "BSD-3-Clause"
-}

@@ -1,15 +1,13 @@
-module Tests exposing (..)
-
-import Test exposing (..)
-import Expect
-import Fuzz exposing (list, int, tuple, string)
-import String
-
+module Tests exposing (all)
 
 -- libraries
 
+import Expect
+import Fuzz exposing (int, list, string, tuple)
 import Queue exposing (..)
 import State exposing (State)
+import String
+import Test exposing (..)
 
 
 computation : Queue Int -> ( Maybe Int, Queue Int )
@@ -19,42 +17,35 @@ computation initial =
         square maybeInt =
             case maybeInt of
                 Just int ->
-                    State.advance <| (,) Nothing << (enqueue <| int ^ 2)
+                    State.advance <| Tuple.pair Nothing << (enqueue <| int ^ 2)
 
                 Nothing ->
-                    State.advance <| (,) Nothing
+                    State.advance <| Tuple.pair Nothing
 
         add : Int -> Maybe Int -> State (Queue Int) (Maybe Int)
         add num _ =
-            State.advance <| (,) Nothing << (enqueue num)
+            State.advance <| Tuple.pair Nothing << enqueue num
 
         getState : Maybe Int -> State (Queue Int) (Maybe Int)
         getState _ =
             State.advance dequeue
     in
-        State.embed front
-            |> State.andThen (add 10)
-            -- add 10 to queue
-            |>
-                State.andThen (add 20)
-            -- add 20 to queue
-            |>
-                State.andThen getState
-            -- this reads first value in queue
-            |>
-                State.andThen square
-            -- square readed value and enqueue it (end)
-            |>
-                State.andThen getState
-            -- read (new) first value in queue
-            |>
-                State.andThen square
-            -- square (new) value and enqueue it (at the end)
-            |>
-                State.andThen getState
-            -- get next Value in queue
-            |>
-                State.run initial
+    State.embed front
+        |> State.andThen (add 10)
+        -- add 10 to queue
+        |> State.andThen (add 20)
+        -- add 20 to queue
+        |> State.andThen getState
+        -- this reads first value in queue
+        |> State.andThen square
+        -- square readed value and enqueue it (end)
+        |> State.andThen getState
+        -- read (new) first value in queue
+        |> State.andThen square
+        -- square (new) value and enqueue it (at the end)
+        |> State.andThen getState
+        -- get next Value in queue
+        |> State.run initial
 
 
 monadic : Test
@@ -68,17 +59,17 @@ monadic =
                 << computation
                 << fromList
     in
-        describe "monadic computation"
-            [ test "with []" <|
-                \() ->
-                    Expect.equal (withList []) ( Just 100, [ 400 ] )
-            , test "with [ 8 ]" <|
-                \() ->
-                    Expect.equal (withList [ 8 ]) ( Just 20, [ 64, 100 ] )
-            , test "with [ 1, 2 ]" <|
-                \() ->
-                    Expect.equal (withList [ 1, 2 ]) ( Just 10, [ 20, 1, 4 ] )
-            ]
+    describe "monadic computation"
+        [ test "with []" <|
+            \() ->
+                Expect.equal (withList []) ( Just 100, [ 400 ] )
+        , test "with [ 8 ]" <|
+            \() ->
+                Expect.equal (withList [ 8 ]) ( Just 20, [ 64, 100 ] )
+        , test "with [ 1, 2 ]" <|
+            \() ->
+                Expect.equal (withList [ 1, 2 ]) ( Just 10, [ 20, 1, 4 ] )
+        ]
 
 
 enqueueList : List a -> Queue a -> Queue a
@@ -93,16 +84,16 @@ enqueueList list queue =
                 add maybeThing =
                     case maybeThing of
                         Just thing ->
-                            State.advance <| (,) Nothing << (enqueue thing)
+                            State.advance <| Tuple.pair Nothing << enqueue thing
 
                         Nothing ->
-                            State.advance <| (,) Nothing
+                            State.advance <| Tuple.pair Nothing
             in
-                State.state (Just head)
-                    |> State.andThen add
-                    |> State.run queue
-                    |> Tuple.second
-                    |> enqueueList tail
+            State.state (Just head)
+                |> State.andThen add
+                |> State.run queue
+                |> Tuple.second
+                |> enqueueList tail
 
 
 usefulMonadic : Test
@@ -124,11 +115,9 @@ usefulMonadic =
 all : Test
 all =
     describe "Queue"
-        [ describe "empty"
-            [ test "empty" <|
-                \() ->
-                    Expect.equal (toList empty) []
-            ]
+        [ test "empty" <|
+            \() ->
+                Expect.equal (toList empty) []
         , describe "tolist & fromList"
             [ test "some" <|
                 \() ->
@@ -149,7 +138,7 @@ all =
             [ fuzz (list string) "after enqueue" <|
                 \list ->
                     (size <| enqueue "bar" <| fromList list)
-                        |> Expect.equal ((List.length list) + 1)
+                        |> Expect.equal (List.length list + 1)
             , test "after dequeue" <|
                 \list ->
                     (size <| Tuple.second <| dequeue <| fromList [ 1, 2, 3 ])
