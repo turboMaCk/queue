@@ -12,7 +12,7 @@ Feedback and contributions to both code and documentation are very welcome.
 # Performance
 
 This implementation uses pair of `List`s
-as described by Chris Okasaki's in his [Purely Functional Data Structures](https://www.cs.cmu.edu/~rwh/theses/okasaki.pdf)
+as described by Chris Okasaki in his [Purely Functional Data Structures](https://www.cs.cmu.edu/~rwh/theses/okasaki.pdf)
 (page 15). One list is used for dequeuing elements, the other one is used for enqueuing new ones. Items in enqueuing `List` are
 stored in reversed order so adding new elements is cheap (*O(1)*). When last element is taken out from dequeuing list
 rebalancing of `Queue` happens. Rebalacing is done by reversing enqueuing list and storing it as new dequeuing list. This is costly operation
