@@ -42,7 +42,7 @@ type alias Front a =
 
 {-| Equality checks (`==`) on `Queue` are unreliable due to dynamic distribution of elements.
 
-If you need need qeuality checks use [`toList`](#toList).
+If you need equality checks use [`toList`](#toList).
 
     Queue.toList firstQueue == Queue.toList secondQueue
 
@@ -88,8 +88,9 @@ isEmpty (Queue fl rl) =
 
 {-| Get size of `Queue`
 
-    Queue.size empty == 0
-    Queue.size (Queue.fromList [ 1, 2 ]) = 2
+    Queue.size Queue.empty == 0
+
+    Queue.size (Queue.fromList [ 1, 2 ]) == 2
 
 -}
 size : Queue a -> Int
@@ -99,9 +100,9 @@ size (Queue fl rl) =
 
 {-| Add item to `Queue`
 
-    Queue.length (Queue.enqueue 1 Queue.empty) == 1
+    Queue.size (Queue.enqueue 1 Queue.empty) == 1
 
-    Queue.length (Queue.enqueue 1 (Queue.fromList [ 1, 2 ])) == 3
+    Queue.size (Queue.enqueue 1 (Queue.fromList [ 1, 2 ])) == 3
 
 -}
 enqueue : a -> Queue a -> Queue a
@@ -145,7 +146,8 @@ front (Queue fl _) =
 {-| Build `Queue` from `List`
 
     Queue.fromList [] == Queue.empty
-    Queue.length (Queue.fromList [ 1, 2, 3 ])) == 3
+
+    Queue.size (Queue.fromList [ 1, 2, 3 ]) == 3
 
 -}
 fromList : List a -> Queue a
