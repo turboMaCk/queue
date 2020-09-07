@@ -1,8 +1,8 @@
 module Queue exposing
-    ( Queue, empty
+    ( Queue, empty, singleton
     , isEmpty, size, enqueue, dequeue, front
     , fromList, toList
-    , map, filter
+    , map, filter, updateFront
     )
 
 {-| Queue is simple FIFO (first in, first out) datastructure.
@@ -10,7 +10,7 @@ module Queue exposing
 
 # Type
 
-@docs Queue, empty
+@docs Queue, empty, singleton
 
 
 # Query
@@ -25,7 +25,7 @@ module Queue exposing
 
 # Transformations
 
-@docs map, filter
+@docs map, filter, updateFront
 
 -}
 
@@ -68,6 +68,16 @@ queue fl rl =
 empty : Queue a
 empty =
     Queue [] []
+
+
+{-| Construct Queue containing single value
+
+    Queue.toList (Queue.singleton 1) == [ 1 ]
+
+-}
+singleton : a -> Queue a
+singleton a =
+    Queue [ a ] []
 
 
 
@@ -137,6 +147,23 @@ dequeue (Queue fl rl) =
 front : Queue a -> Maybe a
 front (Queue fl _) =
     List.head fl
+
+
+{-| Update value at the front of the queue
+
+    Queue.toList (Queue.updateFront (Maybe.map (\x -> x + 1)) (Queue.singleton 3)) == [ 4 ]
+
+    Queue.toList (Queue.updateFront (Maybe.map (\_ -> Just 42)) Queue.empty) == [ 42 ]
+
+-}
+updateFront : (Maybe a -> Maybe a) -> Queue a -> Queue a
+updateFront f (Queue fl rl) =
+    case fl of
+        h :: t ->
+            Queue (f (Just h) :: t) rl
+
+        _ ->
+            Queue [ f Nothing ] rl
 
 
 
