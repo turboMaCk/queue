@@ -155,15 +155,26 @@ front (Queue fl _) =
 
     Queue.toList (Queue.updateFront (Maybe.map (\_ -> Just 42)) Queue.empty) == [ 42 ]
 
+    Queue.toList (Queue.updateFront (Maybe.map (\_ -> Nothing)) (Queue.singleton 3)) == []
+
 -}
 updateFront : (Maybe a -> Maybe a) -> Queue a -> Queue a
 updateFront f (Queue fl rl) =
+    let
+        update_ maybe t =
+            case f maybe of
+                Just a ->
+                    a :: t
+
+                Nothing ->
+                    t
+    in
     case fl of
         h :: t ->
-            Queue (f (Just h) :: t) rl
+            Queue (update_ (Just h) t) rl
 
-        _ ->
-            Queue [ f Nothing ] rl
+        [] ->
+            Queue (update_ Nothing []) rl
 
 
 
