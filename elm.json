@@ -3,7 +3,7 @@
     "name": "turboMaCk/queue",
     "summary": "Simple FIFO (first in, first out) Queue implementation in Elm",
     "license": "BSD-3-Clause",
-    "version": "1.0.2",
+    "version": "1.1.0",
     "exposed-modules": [
         "Queue"
     ],
