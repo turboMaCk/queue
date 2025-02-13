@@ -10,3 +10,4 @@ jobs:
         with:
           elm-version: 0.19.1
       - run: elm make
+      - run: elm-test
