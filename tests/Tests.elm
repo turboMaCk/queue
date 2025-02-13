@@ -3,7 +3,7 @@ module Tests exposing (all)
 -- libraries
 
 import Expect
-import Fuzz exposing (int, list, string, tuple)
+import Fuzz exposing (int, list, string)
 import Queue exposing (..)
 import State exposing (State)
 import String
@@ -129,10 +129,10 @@ all =
         , describe "isEmpty"
             [ test "empty" <|
                 \() ->
-                    Expect.true "empty" <| isEmpty empty
+                    Expect.equal True <| isEmpty empty
             , test "not empty" <|
                 \() ->
-                    Expect.false "not empty" <| isEmpty <| fromList [ 1 ]
+                    Expect.equal False <| isEmpty <| fromList [ 1 ]
             ]
         , describe "size"
             [ fuzz (list string) "after enqueue" <|

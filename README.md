@@ -1,6 +1,6 @@
 # Queue
 
-[![Build Status](https://travis-ci.org/turboMaCk/queue.svg?branch=master)](https://travis-ci.org/turboMaCk/queue)
+![status](https://github.com/turboMaCk/queue/actions/workflows/elm.yaml/badge.svg?branch=master)
 
 Simple **FIFO** (first in, first out) queue data structure. First element added to the `Queue` is the first one to be removed.
 If you're interested in double-ended queue implementation please see [folkertdev/elm-deque](http://package.elm-lang.org/packages/folkertdev/elm-deque/latest).
