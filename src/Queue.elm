@@ -1,6 +1,6 @@
 module Queue exposing
     ( Queue, empty, singleton
-    , isEmpty, size, enqueue, dequeue, front
+    , isEmpty, size, enqueue, dequeue, front, dropFront
     , fromList, toList
     , map, filter, updateFront
     )
@@ -15,7 +15,7 @@ module Queue exposing
 
 # Query
 
-@docs isEmpty, size, enqueue, dequeue, front
+@docs isEmpty, size, enqueue, dequeue, front, dropFront
 
 
 # Lists
@@ -147,6 +147,23 @@ dequeue (Queue fl rl) =
 front : Queue a -> Maybe a
 front (Queue fl _) =
     List.head fl
+
+
+{-| Like `dequeue` but for cases where you don't care about the value in front of the `Queue`
+
+    Queue.dropFront Queue.empty == Queue.empty
+
+    Queue.dropFront (Queue.fromList [ 1, 2 ]) == Queue.fromList [ 2 ]
+
+-}
+dropFront : Queue a -> Queue a
+dropFront (Queue fl rl) =
+    case fl of
+        [] ->
+            Queue [] []
+
+        _ :: tail ->
+            queue tail rl
 
 
 {-| Update value at the front of the queue

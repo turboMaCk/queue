@@ -169,6 +169,14 @@ all =
                 \() ->
                     Expect.equal (front <| fromList [ 1 ]) <| Just 1
             ]
+        , describe "drop front is isomorphic to Tuple.second << dequeue"
+            [ fuzz (list int) "fuzzy" <|
+                \list ->
+                    let
+                        queue = (fromList list)
+                    in
+                    Expect.equal (dropFront queue) (Tuple.second <| dequeue queue)
+            ]
         , describe "map"
             [ fuzz (list string) "identity" <|
                 \list ->
