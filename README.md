@@ -5,8 +5,6 @@
 Simple **FIFO** (first in, first out) queue data structure. First element added to the `Queue` is the first one to be removed.
 If you're interested in double-ended queue implementation please see [folkertdev/elm-deque](http://package.elm-lang.org/packages/folkertdev/elm-deque/latest).
 
-**This package is highly experimental and might change a lot over time.**
-
 Feedback and contributions to both code and documentation are very welcome.
 
 # Performance
